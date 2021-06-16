@@ -13,7 +13,7 @@ from django.core.wsgi import get_wsgi_application
 from django.conf.urls import url, include
 
 urlpatterns = [
-    url(r'^', include('snippets.urls')),
+    url(r'^', include('books.urls')),
 ]
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'api.settings')
 
