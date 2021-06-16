@@ -1,24 +1,45 @@
-from rest_framework import serializers
-from books.models import Book
-from django.contrib.auth.models import User
+from rest_framework import serializers, viewsets
+from books.models import Book, Author, Genre
 
-class BookSerializer(serializers.Serializer):
-    id = serializers.IntegerField(read_only=True)
-    title = serializers.CharField(required=False, allow_blank=True, max_length=100)
-    published_year = serializers.IntegerField(read_only=True)
-    author = serializers.CharField(required=False, allow_blank=True, max_length=100)
-    genre = serializers.CharField(required=False, allow_blank=True, max_length=100)
-    rating = serializers.IntegerField(read_only=True)
+
+class AuthorListSerializer(serializers.ModelSerializer):
+    """Вывод списка авторов"""
+    class Meta:
+        model = Author
+        fields = ("name",)
+
+class GenreListSerializer(serializers.ModelSerializer):
+    """Вывод списка жанров"""
+    class Meta:
+        model = Genre
+        fields = ("name", "number_of_genres",)
+
+class BookDetailSerializer(serializers.ModelSerializer):
+    """Список книг"""
+
+    class Meta:
+        model = Book
+        fields = ("title",)
+
+# class BookViewSet(viewsets.ReadOnlyModelViewSet):
+#     """Список книг"""
+#     author = AuthorListSerializer(read_only=True, many=True)
+#     book = BookDetailSerializer(read_only=True, many=True)
+#
+#     genre = GenreListSerializer(read_only=True, many=True)
+
+
+
+
+
+
+
+class CreateBookSerializer(serializers.ModelSerializer):
+    """Добавление книги"""
 
     def create(self, validated_data):
         return Book.objects.create(**validated_data)
 
-
-
-class UserSerializer(serializers.ModelSerializer):
-    snippets = serializers.PrimaryKeyRelatedField(many=True, queryset=Book.objects.all())
-    owner = serializers.ReadOnlyField(source='owner.username')
-
     class Meta:
-        model = User
-        fields = ['id', 'username', 'books', 'owner']
+        model = Book
+        fields = "__all__"

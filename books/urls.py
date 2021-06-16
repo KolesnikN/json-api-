@@ -6,10 +6,9 @@ from . import views
 
 urlpatterns = [
     url(r'^books/$', views.BookList.as_view()),
-    url(r'^books/(?P<pk>[0-9]+)/$', views.BookDetail.as_view()),
-    path('users/', views.UserList.as_view()),
-    path('users/<int:pk>/', views.UserDetail.as_view()),
-
+    url(r'^authors/$', views.AuthorList.as_view()),
+    url(r'^genres/$', views.GenresList.as_view()),
+    # url(r'^books/top/$', views.Top.as_view()),
 ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)
