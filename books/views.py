@@ -48,6 +48,14 @@ class AuthorSearch(generics.ListAPIView):
     filter_backends = (DjangoFilterBackend,)
     filter_class = NameFilter
 
+    def delete(self, request, pk):
+        # Удаление автора по его ID
+        author = get_object_or_404(Author.objects.all(), pk=id)
+        author.delete()
+        return Response({
+            "message": "Author with id `{}` has been deleted.".format(pk)
+        }, status=204)
+
 class GenresList(generics.ListAPIView):
     """Вывод жанров"""
     queryset = Genre.objects.all()

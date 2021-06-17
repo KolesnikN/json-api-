@@ -6,8 +6,10 @@ from . import views
 
 urlpatterns = [
     path('books/', views.BookList.as_view()),
+    path('books/<int:pk>/', views.BookList.as_view()),
     path('books/top/', views.TopBooks.as_view()),
     path('authors/', views.AuthorSearch.as_view()),
+    path('authors/<int:pk>/', views.AuthorSearch.as_view()),
     path('authors/top', views.TopAuthors.as_view()),
     path('genres/', views.GenresList.as_view()),
 
