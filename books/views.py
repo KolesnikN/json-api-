@@ -1,81 +1,70 @@
+from rest_framework.generics import get_object_or_404
+from rest_framework.response import Response
 from books.models import Book, Author, Genre
-from rest_framework import permissions, viewsets, generics
+from rest_framework import generics
 from django_filters.rest_framework import DjangoFilterBackend
-
-from .permissions import IsOwnerOrReadOnly
-from .service import get_client_ip, YearFilter, PaginationBooks
+from .service import YearFilter, NameFilter
 from books.serializers import (
     BookDetailSerializer,
-    CreateBookSerializer,
+    TopBookDetailSerializer,
+    TopAuthorDetailSerializer,
     AuthorListSerializer,
     GenreListSerializer,
-
 )
-class BookList(generics.CreateAPIView):
+
+class BookList(generics.ListAPIView):
+    """Вывод книг"""
     queryset = Book.objects.all()
     serializer_class = BookDetailSerializer
-    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+    filter_backends = (DjangoFilterBackend,)
+    filter_class = YearFilter
 
-    def perform_create(self, serializer):
-        serializer.save(owner=self.request.user)
+    def delete(self, request, pk):
+        # Удаление книги по её ID
+        book = get_object_or_404(Book.objects.all(), pk=id)
+        book.delete()
+        return Response({
+            "message": "Book with id `{}` has been deleted.".format(pk)
+        }, status=204)
 
-class AuthorList(generics.CreateAPIView):
+class AuthorList(generics.ListAPIView):
     """Вывод авторов"""
     queryset = Author.objects.all()
     serializer_class = AuthorListSerializer
+    filter_backends = (DjangoFilterBackend,)
 
-class GenresList(generics.CreateAPIView):
+    def delete(self, request, pk):
+        # Удаление автора по его ID
+        author = get_object_or_404(Author.objects.all(), pk=id)
+        author.delete()
+        return Response({
+            "message": "Author with id `{}` has been deleted.".format(pk)
+        }, status=204)
+
+class AuthorSearch(generics.ListAPIView):
+    """Вывод авторов"""
+    queryset = Book.objects.all()
+    serializer_class = BookDetailSerializer
+    filter_backends = (DjangoFilterBackend,)
+    filter_class = NameFilter
+
+class GenresList(generics.ListAPIView):
     """Вывод жанров"""
     queryset = Genre.objects.all()
     serializer_class = GenreListSerializer
+    filter_backends = (DjangoFilterBackend,)
+
+class TopBooks(generics.ListAPIView):
+    """Топ 10 книг с лучшим рейтингом по убыванию"""
+    queryset = Book.objects.order_by('-rating')
+    serializer_class = TopBookDetailSerializer
+    filter_backends = (DjangoFilterBackend,)
+
+class TopAuthors(generics.ListAPIView):
+    """Топ 10 авторов с набиольшим кол-вом книг"""
+    queryset = Author.objects.order_by('-number_of_book')
+    serializer_class = TopAuthorDetailSerializer
+    filter_backends = (DjangoFilterBackend,)
 
 
-# class BookList_top(generics.ListCreateAPIView):
-#     queryset = Book.objects.all()
-#     serializer_class = BookDetailSerializer
-#     filter_backends = (DjangoFilterBackend)
-#     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
-#
-#     def perform_create(self, serializer):
-#         serializer.save(owner=self.request.user)
 
-
-
-
-
-# class BookViewSet(viewsets.ReadOnlyModelViewSet):
-#     filter_backends = (DjangoFilterBackend,)
-#     filterset_class = BookFilter
-#     pagination_class = PaginationBooks
-#
-#     def get_queryset(self):
-#         book = Book.objects.all()
-#         return book
-#
-#     def get_serializer_class(self):
-#         if self.action == 'list':
-#             return BookDetailSerializer
-#
-#
-# class AuthorViewSet(viewsets.ReadOnlyModelViewSet):
-#     """Вывод актеров или режиссеров"""
-#     queryset = Author.objects.all()
-#
-#     def get_serializer_class(self):
-#         if self.action == 'list':
-#             return AuthorListSerializer
-#
-# class GenreViewSet(viewsets.ReadOnlyModelViewSet):
-#     """Вывод количества книг жанров"""
-#     queryset = Genre.objects.all()
-#
-#     def get_serializer_class(self):
-#         if self.action == 'list':
-#             return GenreListSerializer
-#
-# class CreateBook(viewsets.ModelViewSet):
-#     """Добавление книги"""
-#     serializer_class = CreateBookSerializer
-#
-#     def perform_create(self, serializer):
-#         serializer.save(ip=get_client_ip(self.request))

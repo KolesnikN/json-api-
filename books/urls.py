@@ -5,10 +5,12 @@ from . import views
 
 
 urlpatterns = [
-    url(r'^books/$', views.BookList.as_view()),
-    url(r'^authors/$', views.AuthorList.as_view()),
-    url(r'^genres/$', views.GenresList.as_view()),
-    # url(r'^books/top/$', views.Top.as_view()),
+    path('books/', views.BookList.as_view()),
+    path('books/top/', views.TopBooks.as_view()),
+    path('authors/', views.AuthorSearch.as_view()),
+    path('authors/top', views.TopAuthors.as_view()),
+    path('genres/', views.GenresList.as_view()),
+
 ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)

@@ -1,7 +1,6 @@
 from rest_framework import serializers, viewsets
 from books.models import Book, Author, Genre
 
-
 class AuthorListSerializer(serializers.ModelSerializer):
     """Вывод списка авторов"""
     class Meta:
@@ -16,17 +15,21 @@ class GenreListSerializer(serializers.ModelSerializer):
 
 class BookDetailSerializer(serializers.ModelSerializer):
     """Список книг"""
-
     class Meta:
         model = Book
-        fields = ("title",)
+        fields = ("author_name", "title")
 
-# class BookViewSet(viewsets.ReadOnlyModelViewSet):
-#     """Список книг"""
-#     author = AuthorListSerializer(read_only=True, many=True)
-#     book = BookDetailSerializer(read_only=True, many=True)
-#
-#     genre = GenreListSerializer(read_only=True, many=True)
+class TopBookDetailSerializer(serializers.ModelSerializer):
+    """Вывод топ 10 книг по рейтингу"""
+    class Meta:
+        model = Book
+        fields = ('title', 'rating',)
+
+class TopAuthorDetailSerializer(serializers.ModelSerializer):
+    """Вывод топ 10 книг по рейтингу"""
+    class Meta:
+        model = Author
+        fields = ('name', 'number_of_book',)
 
 
 
