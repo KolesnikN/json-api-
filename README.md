@@ -1,6 +1,9 @@
 Json api каталога книг 
+
 Вся информация хранитсяв базе данных: 
+
 Таблица books (id, title, published_year, author_id,genre, rating) 
+
 Таблица authors (id, name) 
 
 Api endpoints:
